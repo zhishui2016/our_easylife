@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mlg.easylife.business.mapper.ReplyMapper" >
+  <resultMap id="BaseResultMap" type="com.mlg.easylife.business.domain.Reply" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="reply" property="reply" jdbcType="VARCHAR" />
+    <result column="replyTime" property="replyTime" jdbcType="TIMESTAMP" />
+
+    <association property="replier" javaType="com.mlg.easylife.base.domain.Logininfo" columnPrefix="re_">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+      <result column="headImages" property="headImages"/>
+    </association>
+    <association property="community" javaType="com.mlg.easylife.business.domain.Community" columnPrefix="c_">
+      <id column="id" property="id"/>
+      <result column="content" property="content"/>
+    </association>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from reply
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert"  useGeneratedKeys="true" keyProperty="id" >
+    insert into reply (reply, replyTime,reply_id,communiti_id)
+    values (#{reply,jdbcType=VARCHAR}, #{replyTime,jdbcType=TIMESTAMP},#{replier.id,jdbcType=BIGINT},#{community.id,jdbcType=BIGINT})
+  </insert>
+
+  <update id="updateByPrimaryKey">
+    update reply
+    set reply = #{reply,jdbcType=VARCHAR},
+      replyTime = #{replyTime,jdbcType=TIMESTAMP},
+      reply_id = #{replier.id,jdbcType=BIGINT},
+      editor_id = #{editor.id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <sql id="base_column">
+     r.id, r.reply, r.replyTime,c.id as c_id ,c.content as c_content,
+     re.id as re_id , re.username as re_username ,re.headImages as re_headImages
+  </sql>
+
+  <select id="selectByPrimaryKey"  parameterType="java.lang.Long" >
+    select <include refid="base_column"/>
+    from reply r left join logininfo re on r.reply_id=re.id left join community c on r.communiti_id=c.id
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="beginDate!=null">
+        and r.replyTime &gt;= #{beginDate}
+      </if>
+      <if test="endDate!=null">
+        and r.replyTime &lt;= #{endDate}
+      </if>
+
+      <if test="state >-1 ">
+        and r.state = #{state}
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryByCount" resultType="int">
+    select count(r.id)
+    from reply r
+    <include refid="base_where"/>
+  </select>
+
+  <select id="query" resultMap="BaseResultMap">
+    select <include refid="base_column"/>
+    from reply r join logininfo re on r.reply_id=re.id left join community c on r.communiti_id=c.id
+    <include refid="base_where"/>
+  </select>
+
+</mapper>

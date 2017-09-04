@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mlg.easylife.base.mapper.UserinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.mlg.easylife.base.domain.Userinfo" >
+  
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="authScore" property="authScore" jdbcType="INTEGER" />
+    <result column="bitState" property="bitState" />
+    <result column="realName" property="realName" jdbcType="VARCHAR" />
+    <result column="idNumber" property="idNumber" jdbcType="VARCHAR" />
+    <result column="phoneNumber" property="phoneNumber" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="profile" property="profile" jdbcType="VARCHAR" />
+    <result column="realAuthId" property="realAuthId" jdbcType="BIGINT"  />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="firsttime" property="firsttime" jdbcType="TIMESTAMP" />
+    <result column="lasttime" property="lasttime" jdbcType="TIMESTAMP" />
+    	
+    	 <association property="incomeGrade" javaType="com.mlg.easylife.base.domain.SystemDictionaryItem" column="incomeGrade_id" select="com.mlg.easylife.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    	<association property="marriage" javaType="com.mlg.easylife.base.domain.SystemDictionaryItem" column="marriage_id" select="com.mlg.easylife.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    	<association property="kidCount" javaType="com.mlg.easylife.base.domain.SystemDictionaryItem" column="kidCount_id" select="com.mlg.easylife.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    	<association property="educationBackground" javaType="com.mlg.easylife.base.domain.SystemDictionaryItem" column="educationBackground_id" select="com.mlg.easylife.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    	<association property="houseCondition" javaType="com.mlg.easylife.base.domain.SystemDictionaryItem" column="houseCondition_id" select="com.mlg.easylife.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+  </resultMap>
+  
+  <insert id="insert">
+    insert into userinfo (id,version, bitState, realName, 
+      idNumber, phoneNumber, incomeGrade_id, 
+      marriage_id, kidCount_id, educationBackground_id, 
+      houseCondition_id, email,authScore,realAuthId,sex,age,firsttime,lasttime,profile)
+    values (#{id},0, #{bitState,jdbcType=BIGINT}, #{realName,jdbcType=VARCHAR}, 
+      #{idNumber,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{incomeGrade.id,jdbcType=BIGINT}, 
+      #{marriage.id,jdbcType=BIGINT}, #{kidCount.id,jdbcType=BIGINT}, #{educationBackground.id,jdbcType=BIGINT}, 
+      #{houseCondition.id,jdbcType=BIGINT}, #{email,jdbcType=VARCHAR},#{authScore},#{realAuthId},#{sex,jdbcType=INTEGER},#{age,jdbcType=INTEGER},#{firsttime,jdbcType=TIMESTAMP},#{lasttime,jdbcType=TIMESTAMP},#{profile,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKey" >
+    update userinfo
+    set version = version+1,
+      bitState = #{bitState,jdbcType=BIGINT},
+      realName = #{realName,jdbcType=VARCHAR},
+      idNumber = #{idNumber,jdbcType=VARCHAR},
+      phoneNumber = #{phoneNumber,jdbcType=VARCHAR},
+      incomeGrade_id = #{incomeGrade.id,jdbcType=BIGINT},
+      marriage_id = #{marriage.id,jdbcType=BIGINT},
+      kidCount_id = #{kidCount.id,jdbcType=BIGINT},
+      educationBackground_id = #{educationBackground.id,jdbcType=BIGINT},
+      houseCondition_id = #{houseCondition.id,jdbcType=BIGINT},
+      email = #{email,jdbcType=VARCHAR},
+      profile = #{profile,jdbcType=VARCHAR},
+      realAuthId = #{realAuthId},
+      authScore=#{authScore},
+      sex = #{sex,jdbcType=INTEGER},
+      age = #{age,jdbcType=INTEGER},
+      firsttime = #{firsttime,jdbcType=TIMESTAMP},
+      lasttime = #{lasttime,jdbcType=TIMESTAMP}
+      
+    where id = #{id,jdbcType=BIGINT} and version=#{version}
+  </update>
+  
+  <sql id="base_column">
+  	id, version, bitState, realName, idNumber, phoneNumber, incomeGrade_id, marriage_id,
+    kidCount_id, educationBackground_id, houseCondition_id, email,authScore,realAuthId,sex,age,firsttime,lasttime,profile
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+    select <include refid="base_column"></include>
+    from userinfo
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select <include refid="base_column"></include>
+    from userinfo
+  </select>
+  
+  <select id="complement" resultType="hashmap">
+  	select id,username
+  	from logininfo
+  	where username like concat(#{keyword},"%")
+  </select>
+</mapper>

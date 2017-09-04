@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mlg.easylife.base.mapper.IplogMapper" >
+  <resultMap id="BaseResultMap" type="com.mlg.easylife.base.domain.Iplog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="logintime" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="userType" property="userType" jdbcType="BIT" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="detail" property="detail" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+    insert into iplog (ip, state, username, 
+      logintime,userType,type,detail)
+    values (#{ip,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, #{username,jdbcType=VARCHAR}, 
+      #{loginTime,jdbcType=TIMESTAMP},#{userType}, #{type,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="getLastLogintime" resultType="Date">
+  	select  max(loginTime)
+	from iplog 
+	where username=#{username}
+  </select>
+  
+  
+  <sql id="base_where">
+  	<where>
+ 		<if test="beginDate!=null">
+ 			and logintime &gt;= #{beginDate}
+ 		</if> 	
+ 		<if test="endDate!=null">
+ 			and logintime &lt;= #{endDate}
+ 		</if> 	
+ 		<if test="username!=null">
+ 			and username = #{username}
+ 		</if> 	
+ 		<if test="state >-1 ">
+ 			and state = #{state}
+ 		</if> 	
+ 		<if test="userType >-1 ">
+ 			and userType = #{userType}
+ 		</if> 	
+  	</where>
+  </sql>
+  
+  <!--总条数  -->
+  <select id="queryForCount" resultType="int">
+  	select count(id)
+  	from iplog 
+  	<include refid="base_where"/>
+  </select>
+  
+  <!--总页数  -->
+  <select id="query" resultMap="BaseResultMap" >
+    select id, ip, state, username, logintime, userType,type,detail
+    from iplog
+   <include refid="base_where"/>
+    limit #{start},#{pageSize}
+  </select>
+
+  <select id="selectCountByUserid" resultMap="BaseResultMap">
+        SELECT COUNT(*) username FROM iplog
+        WHERE username = #{username, jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectLogByUserid" resultMap="BaseResultMap">
+        SELECT id, ip, state, username, logintime, userType,type,detail
+        FROM iplog
+        WHERE username = #{username, jdbcType=VARCHAR}
+        ORDER BY TIME DESC
+        LIMIT #{offset}, #{limit}
+  </select>
+</mapper>

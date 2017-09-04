@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mlg.easylife.business.mapper.CommunityMapper" >
+  <resultMap id="BaseResultMap" type="com.mlg.easylife.business.domain.Community" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="imagepath" property="imagePath" jdbcType="VARCHAR" />
+    <result column="publishTime" property="publishTime" jdbcType="TIMESTAMP"  />
+    <result column="goodTimes" property="goodTimes" jdbcType="INTEGER" />
+    <result column="commonTimes" property="commonTimes" jdbcType="INTEGER" />
+    <result column="replyTimes" property="replyTimes" jdbcType="INTEGER" />
+    <result column="badTimes" property="badTimes" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+
+    <association property="applier" javaType="com.mlg.easylife.base.domain.Logininfo" columnPrefix="ap_">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+      <result column="headImages" property="headImages"/>
+    </association>
+
+    <association property="glyphicon" javaType="com.mlg.easylife.business.domain.Glyphicon" columnPrefix="gl_">
+      <id column="id" property="id"/>
+      <result column="goodTimes" property="goodTimes"/>
+      <result column="commonTimes" property="commonTimes"/>
+      <result column="badTimes" property="badTimes"/>
+      <result column="community_id" property="community_id"/>
+      <result column="userinfo_id" property="userinfo_id"/>
+    </association>
+
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from community
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+    insert into community (imagepath, publishTime, goodTimes,commonTimes, badTimes,applier_id,content,replyTimes,state)
+    values (#{imagePath,jdbcType=VARCHAR}, #{publishTime,jdbcType=TIMESTAMP}, #{goodTimes,jdbcType=INTEGER},#{commonTimes,jdbcType=INTEGER}, #{badTimes,jdbcType=INTEGER}, #{applier.id,jdbcType=BIGINT},#{content,jdbcType=VARCHAR}, #{replyTimes,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" >
+    update community
+    set imagepath = #{imagePath,jdbcType=VARCHAR},
+      publishTime = #{publishTime,jdbcType=TIMESTAMP},
+      goodTimes = #{goodTimes,jdbcType=INTEGER},
+      commonTimes = #{commonTimes,jdbcType=INTEGER},
+      badTimes = #{badTimes,jdbcType=INTEGER},
+      replyTimes = #{replyTimes,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER},
+      applier_id = #{applier.id,jdbcType=BIGINT},
+      content = #{content,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--好评-->
+  <update id="updateByPrimaryKeyToGood" >
+    update community
+    set goodTimes = #{goodTimes,jdbcType=INTEGER},state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--一般评价-->
+  <update id="updateByPrimaryKeyToCommon" >
+    update community
+    set commonTimes = #{commonTimes,jdbcType=INTEGER},state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--差评价-->
+  <update id="updateByPrimaryKeyToBad" >
+    update community
+    set badTimes = #{badTimes,jdbcType=INTEGER},state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--回复总条数-->
+  <update id="updateReplyTimesByPrimaryKey" >
+    update community
+    set replyTimes = #{replyTimes,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <sql id="base_column">
+   c.id,c.content,c.imagePath,c.publishTime,c.goodTimes,c.commonTimes,c.badTimes,c.replyTimes,c.state,
+   ap.id as ap_id , ap.username as ap_username ,ap.headImages as ap_headImages ,gl.goodTimes as gl_goodTimes,gl.commonTimes as commonTimes,gl.badTimes as gl_badTimes,gl.userinfo_id
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select  <include refid="base_column"/>
+    from community c left join logininfo ap on c.applier_id=ap.id left join glyphicon gl on c.glyphicon_id=gl.id
+    where c.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByUserinfoAndGlyphicon" resultMap="BaseResultMap">
+    select  <include refid="base_column"/>
+    from community c left join logininfo ap on c.applier_id=ap.id left join glyphicon gl on c.id=gl.community_id
+    where gl.userinfo_id = #{userinfo_id,jdbcType=BIGINT} and gl.community_id = #{community_id,jdbcType=BIGINT}
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="beginDate!=null">
+        and c.publishTime &gt;= #{beginDate}
+      </if>
+      <if test="endDate!=null">
+        and c.publishTime &lt;= #{endDate}
+      </if>
+
+      <if test="state >-1 ">
+        and c.state = #{state}
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryByCount" resultType="int">
+    select count(c.id)
+    from community c
+    <include refid="base_where"/>
+  </select>
+
+  <select id="query" resultMap="BaseResultMap">
+    select  <include refid="base_column"/>
+    from community c left join logininfo ap on c.applier_id=ap.id left join glyphicon gl on c.id=gl.community_id
+    <include refid="base_where"/> group by c.id ORDER BY publishTime DESC
+    limit #{start},#{pageSize}
+  </select>
+</mapper>

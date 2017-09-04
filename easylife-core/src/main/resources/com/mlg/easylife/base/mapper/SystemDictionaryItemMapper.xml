@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mlg.easylife.base.mapper.SystemDictionaryItemMapper" >
+  <resultMap id="BaseResultMap" type="com.mlg.easylife.base.domain.SystemDictionaryItem" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="parentId" property="parentId" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="sequence" property="sequence" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+    insert into systemdictionaryitem (parentId, title, sequence
+      )
+    values (#{parentId,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{sequence,jdbcType=TINYINT}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKey" >
+    update systemdictionaryitem
+    set parentId = #{parentId,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      sequence = #{sequence,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" >
+    select id, parentId, title, sequence
+    from systemdictionaryitem
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByParentSn" resultMap="BaseResultMap" >
+    select item.id,item.parentId, item.title, item.sequence,sd.id,sd.sn,sd.title
+    from systemdictionaryitem item join systemdictionary sd on item.parentId=sd.id
+    where sd.sn=#{sn} 
+    order by sequence ASC
+  </select>
+  
+  <sql id="base_where">
+  	<where>
+  		<if test="keyword!=null">
+  			and title like concat("%",#{keyword},"%")
+  		</if>
+  		<if test="parentId!=null">
+			and parentId=#{parentId}  		
+  		</if>
+  	</where>
+  </sql>
+  
+  <select id="queryForCount" resultType="int">
+  	select count(id)
+  	from systemdictionaryitem
+  	<include refid="base_where"/>
+  </select>
+  
+  <select id="query" resultMap="BaseResultMap" >
+  	select id, parentId, title, sequence
+  	from systemdictionaryitem
+  	<include refid="base_where"/>
+  	limit #{start},#{pageSize}
+  </select>
+  
+</mapper>
