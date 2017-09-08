@@ -43,7 +43,10 @@
     from sport
   </select>
 
-
+  <select id="selectForSourceUrl" resultType="String" >
+    select id
+    from sport
+  </select>
   <sql id="base_where">
     <where>
       <if test="beginDate!=null">

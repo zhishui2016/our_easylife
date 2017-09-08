@@ -18,7 +18,7 @@
 			<div class="row">
 				<!--导航菜单-->
 				<div class="col-sm-3">
-					<#assign currentMenu="integral_help"/>
+				<#assign currentMenu = "integral_help" />
 					<#include "common/leftmenu-tpl.ftl"/>
 				</div>
 				<!-- 功能页面菜单 -->

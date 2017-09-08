@@ -64,6 +64,10 @@
     <include refid="base_where"/>
   </select>
 
+  <select id="selectForSourceUrl" resultType="String" >
+    select id
+    from society
+  </select>
   <select id="query" resultMap="BaseResultMap">
     select *
     from society s

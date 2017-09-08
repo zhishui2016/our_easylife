@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="easylife-mgrsite:war">
+    <output-path>$PROJECT_DIR$/easylife-mgrsite/target</output-path>
+    <root id="archive" name="easylife-website.war">
+      <element id="artifact" artifact-name="easylife-mgrsite:war exploded" />
+    </root>
+  </artifact>
+</component>

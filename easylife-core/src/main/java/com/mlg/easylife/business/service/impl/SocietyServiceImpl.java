@@ -41,8 +41,8 @@ public class SocietyServiceImpl extends SocietyReptiles implements ISocietyServi
         int count = societyMapper.queryByCount(qo);
         if (count > 0) {
             List<Society> query = societyMapper.query(qo);
-            return new PageResult(count, query, qo.getCurrentPage(),
-                    qo.getPageSize());
+            PageResult pageResult = new PageResult(count, query, qo.getCurrentPage(), qo.getPageSize());
+            return pageResult;
         }
         return PageResult.empty(qo.getPageSize());
     }

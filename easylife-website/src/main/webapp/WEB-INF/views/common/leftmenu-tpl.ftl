@@ -20,11 +20,11 @@
 		</ul>
 	</li>
 	<li class="list-group-item">
-		<a href="#"><span>资产详情</span></a>
+		<a href="#"><span>VIP专区</span></a>
 		<ul class="in">
-			<li name="accountFlow_list"><a href="">账户流水</a></li>
-			<li name="recharge"><a href="/recharge_list.do">充值明细</a></li>
-			<li name="moneyWithdraw"><a href="/moneyWithdraw.do">提现申请</a></li>
+			<li name="express"><a href="/express.do">快递</a></li>
+			<li name="vip_chatroom"><a href="/vip_chatroom.do">VIP聊天室</a></li>
+			<li name="multiMedia"><a href="/multiMedia.do">多媒体</a></li>
 		</ul>
 	</li>
 </ul>

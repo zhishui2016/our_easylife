@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/easylife-core/easylife-core.iml" filepath="$PROJECT_DIR$/easylife-core/easylife-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylife-mgrsite/easylife-mgrsite.iml" filepath="$PROJECT_DIR$/easylife-mgrsite/easylife-mgrsite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylife-parents/easylife-parents.iml" filepath="$PROJECT_DIR$/easylife-parents/easylife-parents.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylife-website/easylife-website.iml" filepath="$PROJECT_DIR$/easylife-website/easylife-website.iml" />
+    </modules>
+  </component>
+</project>
